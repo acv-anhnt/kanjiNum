@@ -71,6 +71,11 @@ RSpec.describe Kansuji do
     expect(31000420.to_kansuji).to eq "三千百万四百二十"
   end
 
+  it "should convert 10^68 to 一無量大数" do
+    bigNum = 10**68
+    expect(bigNum.to_kansuji).to eq "一無量大数"
+  end
+
   it "should convert 20 to 二十" do
     expect(20.to_kansuji).to eq "二十"
   end
@@ -81,5 +86,34 @@ RSpec.describe Kansuji do
 
   it "should convert 75348257957438 to 七十五兆三千四百八十二億五千七百九十五万七千四百三十八" do
     expect(75348257957438.to_kansuji).to eq "七十五兆三千四百八十二億五千七百九十五万七千四百三十八"
+  end
+
+  it "should convert 10**64 to 一不可思議" do
+    bigNum = 10**64
+    expect(bigNum.to_kansuji).to eq "一不可思議"
+  end
+
+  it "should convert 7693247647972375740000000000000000000000000463226432632644362 to 七那由他六千九百三十二阿僧祇四千七百六十四恒河沙七千九百七十二極三千七百五十七載四千正四十六京三千二百二十六兆四千三百二十六億三千二百六十四万四千三百六十二" do
+    longString = "七那由他六千九百三十二阿僧祇四千七百六十四恒河沙七千九百七十二極三千七百五十七載四千正四十六京三千二百二十六兆四千三百二十六億三千二百六十四万四千三百六十二"
+    bigNum = 7693247647972375740000000000000000000000000463226432632644362
+    expect(bigNum.to_kansuji).to eq longString
+  end
+
+  it "should convert 七那由他六千九百三十二阿僧祇四千七百六十四恒河沙七千九百七十二極三千七百五十七載四千正四十六京三千二百二十六兆四千三百二十六億三千二百六十四万四千三百六十二 to 7693247647972375740000000000000000000000000463226432632644362" do
+    longString = "七那由他六千九百三十二阿僧祇四千七百六十四恒河沙七千九百七十二極三千七百五十七載四千正四十六京三千二百二十六兆四千三百二十六億三千二百六十四万四千三百六十二"
+    bigNum = 7693247647972375740000000000000000000000000463226432632644362
+    expect(longString.to_number).to eq bigNum
+  end
+
+  it "should convert long string with 無量大数 to number" do
+    longString = "五無量大数五千八百一不可思議六千四百七十九那由他七千二百三十七阿僧祇五千七百四十恒河沙四千六百三十二秭二千六百四十三垓二千六百三十二京六千四百四十三兆六千二百億"
+    bigNum = 558016479723757400000000000000000000000004632264326326443620000000000
+    expect(longString.to_number).to eq bigNum
+  end
+
+  it "should convert big number to longString" do
+    longString = "五無量大数五千八百一不可思議六千四百七十九那由他七千二百三十七阿僧祇五千七百四十恒河沙四千六百三十二秭二千六百四十三垓二千六百三十二京六千四百四十三兆六千二百億"
+    bigNum = 558016479723757400000000000000000000000004632264326326443620000000000
+    expect(bigNum.to_kansuji).to eq longString
   end
 end
