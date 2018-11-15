@@ -1,15 +1,15 @@
 require "kansuji/version"
 class Error < StandardError; end
-Kanji = Hash["無量大数" => 10**68, "不可思議" => 10**64, "那由他" => 10**60, "阿僧祇" => 10**56, "恒河沙" => 10**52, 
+Kanji = {"無量大数" => 10**68, "不可思議" => 10**64, "那由他" => 10**60, "阿僧祇" => 10**56, "恒河沙" => 10**52, 
               "極" => 10**48, "載" => 10**44, "正" => 10**40, "澗" => 10**36,"溝" => 10**32,"穣" => 10**28, "秭" => 10**24,
               "禾予" => 10**24, "𥝱" => 10**24, "垓" => 10**20, "京" => 10**16, "兆" => 10**12, "億" => 10**8,
               "万" => 10**4, "千" => 1000, "百" => 100, "十" => 10, "九" => 9, "八" => 8, "七" => 7, "六" => 6, "五" => 5,
-              "四" => 4, "三" => 3, "二" => 2, "一" => 1, "零" => 0, "〇" => 0]
+              "四" => 4, "三" => 3, "二" => 2, "一" => 1, "零" => 0, "〇" => 0}
 class KansujiHelp
   def segmentVal (array)
     return 1 if array.length == 0 #Case: [100, 10]
     array.each_with_index do |a, i| array[i], array[i+1] = 0, a*array[i+1] if (i < array.length-1 and a < array[i+1]) end
-    return array.reduce(:+)
+    return array.sum()
   end
   def onePartToKanji (partValue)
     kanjiString = ""
@@ -28,7 +28,7 @@ class String
     kansujiHelp = KansujiHelp.new()
     numberValueArray = Array.new()
     sum = 0
-    stringArr = self.split('')
+    stringArr = self.chars
     while !stringArr.empty? do  #Convert the Kanji String to number value array
       stranChar = true
       Kanji.each do |key, value|
@@ -45,8 +45,8 @@ class String
     end  
     return numberValueArray[0] if numberValueArray.length == 1
     Kanji.each do |key, value|     #sum = value(Doan1)*京value + value(Doan2)*兆value+...
-      numberValueArray.each_with_index do |n, i|  
-        if (n == value) then
+      numberValueArray.each_with_index do |item, i|  
+        if (item == value) then
           sum, numberValueArray = sum + kansujiHelp.segmentVal(numberValueArray.take(i))*value, numberValueArray.drop(i+1)
           break
         end
