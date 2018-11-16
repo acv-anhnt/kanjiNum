@@ -43,9 +43,9 @@ RSpec.describe Kansuji do
     expect("三千百万四百二十".to_number).to eq 31000420
   end
 
-  it 'you should see a warning when you run this Example' do 
-    (1 + 1).should eq(2) 
-  end 
+  it 'you should see a warning when you run this Example' do
+    (1 + 1).should eq(2)
+  end
   it "should convert 1 to 一" do
     expect(1.to_kansuji).to eq "一"
   end
