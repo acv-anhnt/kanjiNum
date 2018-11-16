@@ -43,6 +43,9 @@ RSpec.describe Kansuji do
     expect("三千百万四百二十".to_number).to eq 31000420
   end
 
+  it 'you should see a warning when you run this Example' do 
+    (1 + 1).should eq(2) 
+  end 
   it "should convert 1 to 一" do
     expect(1.to_kansuji).to eq "一"
   end
@@ -63,8 +66,8 @@ RSpec.describe Kansuji do
     expect(5.to_kansuji).to eq "五"
   end
 
-  it "should convert 1002031000421 to 一兆二十億三千百万四百二十一" do
-    expect(1002031000421.to_kansuji).to eq "一兆二十億三千百万四百二十一"
+  it "should convert 1002031000421 to 兆二十億三千百万四百二十一" do
+    expect(1002031000421.to_kansuji).to eq "兆二十億三千百万四百二十一"
   end
 
   it "should convert 31000420 to 三千百万四百二十" do
@@ -106,13 +109,13 @@ RSpec.describe Kansuji do
   end
 
   it "should convert long string with 無量大数 to number" do
-    longString = "五無量大数五千八百一不可思議六千四百七十九那由他七千二百三十七阿僧祇五千七百四十恒河沙四千六百三十二秭二千六百四十三垓二千六百三十二京六千四百四十三兆六千二百億"
+    longString = "五無量大数五千八百一不可思議六千四百七十九那由他七千二百三十七阿僧祇五千七百四十恒河沙四千六百三十二𥝱二千六百四十三垓二千六百三十二京六千四百四十三兆六千二百億"
     bigNum = 558016479723757400000000000000000000000004632264326326443620000000000
     expect(longString.to_number).to eq bigNum
   end
 
   it "should convert big number to longString" do
-    longString = "五無量大数五千八百一不可思議六千四百七十九那由他七千二百三十七阿僧祇五千七百四十恒河沙四千六百三十二秭二千六百四十三垓二千六百三十二京六千四百四十三兆六千二百億"
+    longString = "五無量大数五千八百一不可思議六千四百七十九那由他七千二百三十七阿僧祇五千七百四十恒河沙四千六百三十二𥝱二千六百四十三垓二千六百三十二京六千四百四十三兆六千二百億"
     bigNum = 558016479723757400000000000000000000000004632264326326443620000000000
     expect(bigNum.to_kansuji).to eq longString
   end
