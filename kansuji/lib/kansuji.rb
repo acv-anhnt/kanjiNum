@@ -5,70 +5,44 @@ Kanji = {"無量大数" => 10**68, "不可思議" => 10**64, "那由他" => 10**
               "禾予" => 10**24, "𥝱" => 10**24, "垓" => 10**20, "京" => 10**16, "兆" => 10**12, "億" => 10**8,
               "万" => 10**4, "千" => 1000, "百" => 100, "十" => 10, "九" => 9, "八" => 8, "七" => 7, "六" => 6, "五" => 5,
               "四" => 4, "三" => 3, "二" => 2, "一" => 1, "零" => 0, "〇" => 0}
-class KansujiHelp
-  def segmentVal (array)
-    return 1 if array.length == 0 #Case: [100, 10]
-    array.each_with_index do |a, i| array[i], array[i+1] = 0, a*array[i+1] if (i < array.length-1 and a < array[i+1]) end
-    return array.sum()
+class KansujHelp
+  def segVal(ary)
+    return 1 if ary.length == 0 #Case: [100, 10]
+    ary.each_with_index do |val, i| ary[i], ary[i+1] = 0, val*ary[i+1] if (i < ary.length-1 and val < ary[i+1]) end
+    return ary.sum
   end
-  def onePartToKanji (partValue)
-    kanjiString = ""
-    Kanji.each do |key, value|
-      break if value == 9
-      intPart = partValue/value
-      kanjiString, partValue = kanjiString + key, partValue - value if intPart == 1
-      kanjiString, partValue = kanjiString + Kanji.key(intPart) + key, partValue - intPart*value if intPart > 1
+  def toKanj(pVal1, first)
+    kanjStr, pVal = "", pVal1
+    Kanji.select{|k ,v| v > 9}.each do |key, val|
+      digit, kansujHelp = pVal/val, (KansujHelp.new if first == true)
+      tmpVal = first == true ? kanjStr + kansujHelp.toKanj(digit, false) + key : kanjStr + Kanji.key(digit) + key
+      kanjStr, pVal = digit == 1 ? [kanjStr + key, pVal - val] : ( digit == 0 ? [kanjStr, pVal] : [tmpVal, pVal - digit*val])
     end
-    restPart = partValue != 0 ? Kanji.key(partValue): ""
-    return kanjiString + restPart
+    restStr = pVal != 0 ? Kanji.key(pVal): ""
+    return (pVal1.digits.last == 1 and pVal1 != 1 and first == true) ? "一" + kanjStr + restStr : kanjStr + restStr
   end
 end
 class String
   def to_number
-    kansujiHelp = KansujiHelp.new()
-    numberValueArray = Array.new()
-    sum = 0
-    stringArr = self.chars
-    while !stringArr.empty? do  #Convert the Kanji String to number value array
+    kansujHelp, valAry, sum, strAry = KansujHelp.new, Array.new, sum = 0, strAry = self.chars
+    while !strAry.empty? do  #Convert the Kanji String to number value array
       stranChar = true
       Kanji.each do |key, value|
-        if key.include? stringArr[0] then
-          numberValueArray.push(value)
-          stringArr, stranChar = stringArr.drop(key.length), false  #case: has many letters for one value
-          break
-        end
+        valAry.push(value) and (strAry, stranChar = strAry.drop(key.length), false) and break if key.include? strAry[0]
       end
-      if stranChar == true then
-        puts "**********There is strange character: #{stringArr[0]}"
-        break
-      end
-    end  
-    return numberValueArray[0] if numberValueArray.length == 1
+      break if stranChar == true #If there are characters which are not Kanji number characters
+    end
+    return valAry[0] if valAry.length == 1
     Kanji.each do |key, value|     #sum = value(Doan1)*京value + value(Doan2)*兆value+...
-      numberValueArray.each_with_index do |item, i|  
-        if (item == value) then
-          sum, numberValueArray = sum + kansujiHelp.segmentVal(numberValueArray.take(i))*value, numberValueArray.drop(i+1)
-          break
-        end
+      valAry.each_with_index do |val, i|  
+        ((sum, valAry = sum + kansujHelp.segVal(valAry.take(i))*value, valAry.drop(i+1)) and break) if (val == value)
       end
     end
-    rest = numberValueArray.length > 0 ? numberValueArray[0]:0
-    return sum + rest #After running the loop, we can have the last part
+    rest = valAry.length > 0 ? valAry[0] : 0 and return sum + rest
   end
 end
 class Integer
   def to_kansuji
-    kanjiString, number, hasOneAtBegin = "", self, false
-    kansujiHelp = KansujiHelp.new()
-    Kanji.each do |key, value|
-      break if value == 9
-      intPart = number/value
-      kanjiString, number = kanjiString + key, number - value if intPart == 1
-      #There is value before the break
-      kanjiString, number = kanjiString + kansujiHelp.onePartToKanji(intPart) + key, number - intPart*value if intPart > 1
-    end
-    restPart = number != 0 ? Kanji.key(number): ""
-    kanjiString = "一" + kanjiString if self.digits().last == 1 and self != 1
-    return kanjiString + restPart
+    kansujHelp = KansujHelp.new and return kansujHelp.toKanj(self, true)
   end
 end
